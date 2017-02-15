@@ -8,7 +8,7 @@ Docker image for Zope with BDR specific Add-ons and settings available.
 
 ### Base docker image
 
- - [hub.docker.com](https://hub.docker.com/u/eeacms/reportek-bdr)
+ - [hub.docker.com](https://hub.docker.com/r/eeacms/reportek-bdr/)
 
 ### Source code
 
@@ -27,6 +27,35 @@ See [eeacms/zope](https://hub.docker.com/u/eeacms/zope)
 ## Upgrade
 
     $ docker pull eeacms/reportek-bdr
+
+## Development and testing
+
+If you want to be able to run tests, please add to src/bdr-instance.cfg file the following:
+
+    parts +=
+        i18ndude
+        test
+
+    [test]
+    recipe = zc.recipe.testrunner
+    defaults = ['--auto-color', '--auto-progress']
+    eggs =
+        ${instance:eggs}
+        cssselect
+        Mock
+        pdbpp
+    environment = testenv
+
+    [testenv]
+    CLIENT_HOME = ${buildout:directory}/var/instance
+
+After that, build the image locally:
+
+    $ docker build -t reportek.bdr-instance:devel .
+
+and use it in docker compose file for _instance_ service:
+
+    image: reportek.bdr-instance:devel
 
 ## Copyright and license
 
