@@ -13,5 +13,5 @@ COPY src/sources.cfg                      \
 COPY src/docker-initialize.py             /
 
 USER root
-RUN ./install.sh
+RUN pip install pathlib && ./install.sh
 USER zope-www
