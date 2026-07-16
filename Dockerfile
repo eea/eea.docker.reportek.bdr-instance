@@ -6,7 +6,7 @@ ARG TARGETPLATFORM=linux/amd64
 
 FROM --platform=$TARGETPLATFORM dhi.io/uv:0 AS uv
 
-FROM --platform=$TARGETPLATFORM eeacms/reportek-base-dr:z5-1.24
+FROM --platform=$TARGETPLATFORM eeacms/reportek-base-dr:z5-1.25
 
 USER root
 
@@ -19,9 +19,9 @@ ENV DATADICTIONARY_SCHEMAS_URL=http://dd.eionet.europa.eu/api/schemas/forObligat
     zope_i18n_compile_mo_files=true
 
 RUN uv pip install --python=/opt/zope/bin/python \
-        --index-url https://pypi.org/simple \
-        --find-links https://eggrepo.eea.europa.eu/simple/ \
-        -r /opt/zope/requirements-bdr.txt && \
+    --index-url https://pypi.org/simple \
+    --find-links https://eggrepo.eea.europa.eu/simple/ \
+    -r /opt/zope/requirements-bdr.txt && \
     chown ${ZOPE_UID}:${ZOPE_GID} /opt/zope/etc/site.zcml
 
 USER zope-www
