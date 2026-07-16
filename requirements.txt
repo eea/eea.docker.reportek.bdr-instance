@@ -1,0 +1,3 @@
+# Extra dependencies required by the BDR overlay on top of eeacms/reportek-base-dr:z5-latest
+python-cas==1.6.0
+defusedxml==0.7.1

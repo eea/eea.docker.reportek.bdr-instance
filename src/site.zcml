@@ -1,0 +1,27 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five">
+
+    <!-- Load Zope's default configuration. This registers the Zope2/Five
+         directives, permissions, browser machinery, ZMI resources, security
+         policy, etc. -->
+    <include package="Zope2.App" file="meta.zcml" />
+    <include package="Zope2.App" />
+
+    <!-- Products -->
+    <include package="Products.Reportek" />
+    <includeOverrides package="Products.Reportek" file="overrides.zcml" />
+
+    <!-- LDAP authentication -->
+    <include package="pas.plugins.ldap" />
+
+    <!-- Plone components used by Reportek forms/CSRF protection -->
+    <include package="plone.keyring" />
+    <include package="plone.protect" />
+
+    <!-- Monitoring -->
+    <include package="eea.sentry" />
+
+    <!-- BDR Specific Views -->
+    <include package="Products.Reportek" file="views.bdr.zcml" />
+
+</configure>

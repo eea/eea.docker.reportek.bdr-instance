@@ -1,61 +1,31 @@
-# Zope w/ BDR Add-ons ready to run Docker image
+# Zope 5 w/ BDR Add-ons ready to run Docker image
 
-Docker image for Zope with BDR specific Add-ons and settings available.
+Downstream, application-specific Docker Hardened Image (DHI) for the Reportek BDR environment.
 
-### Supported tags and respective Dockerfile links
+## Architecture Context
 
-  - `:latest` (default)
+This image natively subclasses [eeacms/reportek-base-dr:z5](https://hub.docker.com/r/eeacms/reportek-base-dr) leveraging the pre-compiled Zope 5 infrastructure to cleanly enforce specific application-layer topologies:
+1. **ZCML Overlays:** Injects a custom `site.zcml` mapping `<include package="Products.Reportek" file="views.bdr.zcml" />` explicitly targeting BDR views.
+2. **Environment Globals:** Enforces metadata variables specifically tuned to the BDR footprint.
 
-### Base docker image
+## Environment Variables
 
- - [hub.docker.com](https://hub.docker.com/r/eeacms/reportek-bdr/)
+Aside from the standard Zope Waitress runtime variables handled by the Base image (`ZEO_ADDRESS`, `ZOPE_THREADS`, etc.), this BDR overlay explicitly overrides the following globals by default inside the `Dockerfile`:
 
-### Source code
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `REPORTEK_DEPLOYMENT` | `BDR` | Context marker identifying the environment |
+| `DATADICTIONARY_SCHEMAS_URL` | `http://dd.eionet.europa.eu/api/schemas/forObligation` | Target URL for EIONET DD validation |
+| `UNS_NOTIFICATIONS` | `on` | Explicitly enables Unified Notification System hooks |
 
-  - [github.com](http://github.com/eea/eea.docker.reportek.bdr-instance)
+## Execution
 
-### Installation
+Because this image identically inherits the `docker-entrypoint.sh` definitions from the Base image, standard commands gracefully resolve downward:
 
-1. Install [Docker](https://www.docker.com/)
-
-2. Install [Docker Compose](https://docs.docker.com/compose/) (optional)
-
-## Usage
-
-See [eeacms/zope](https://hub.docker.com/u/eeacms/zope)
-
-## Upgrade
-
-    $ docker pull eeacms/reportek-bdr
-
-## Development and testing
-
-If you want to be able to run tests, please add to src/bdr-instance.cfg file the following:
-
-    parts +=
-        i18ndude
-        test
-
-    [test]
-    recipe = zc.recipe.testrunner
-    defaults = ['--auto-color', '--auto-progress']
-    eggs =
-        ${instance:eggs}
-        cssselect
-        Mock
-        pdbpp
-    environment = testenv
-
-    [testenv]
-    CLIENT_HOME = ${buildout:directory}/var/instance
-
-After that, build the image locally:
-
-    $ docker build -t reportek.bdr-instance:devel .
-
-and use it in docker compose file for _instance_ service:
-
-    image: reportek.bdr-instance:devel
+```bash
+# Start Waitress natively mapped to the BDR overlays
+docker run -p 8080:8080 eeacms/reportek-bdr:z5 start
+```
 
 ## Copyright and license
 
