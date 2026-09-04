@@ -6,7 +6,7 @@ ARG TARGETPLATFORM=linux/amd64
 
 FROM --platform=$TARGETPLATFORM dhi.io/uv:0 AS uv
 
-FROM --platform=$TARGETPLATFORM eeacms/reportek-base-dr:z5-1.35
+FROM --platform=$TARGETPLATFORM eeacms/reportek-base-dr:z5-1.36
 
 USER root
 
