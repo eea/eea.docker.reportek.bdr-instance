@@ -51,7 +51,19 @@ pipeline {
         expression { !env.TAG_NAME || env.TAG_NAME ==~ env.TAG_PATTERN }
       }
       steps {
-        sh '''docker build --pull --platform=linux/amd64 --label "org.opencontainers.image.revision=$GIT_COMMIT" --label "org.opencontainers.image.source=https://github.com/eea/$GIT_NAME" --label "org.opencontainers.image.version=${TAG_NAME:-$BRANCH_NAME}" -t "$TEST_IMAGE" .'''
+        withCredentials([usernamePassword(credentialsId: 'jekinsdockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+          script {
+            try {
+              // the Dockerfile pulls dhi.io (Docker Hardened Images) stages
+              sh '''
+                printf '%s' "$DOCKERHUB_PASSWORD" | docker login dhi.io -u "$DOCKERHUB_USERNAME" --password-stdin
+                docker build --pull --platform=linux/amd64 --label "org.opencontainers.image.revision=$GIT_COMMIT" --label "org.opencontainers.image.source=https://github.com/eea/$GIT_NAME" --label "org.opencontainers.image.version=${TAG_NAME:-$BRANCH_NAME}" -t "$TEST_IMAGE" .
+              '''
+            } finally {
+              sh '''docker logout dhi.io || true'''
+            }
+          }
+        }
       }
     }
 
